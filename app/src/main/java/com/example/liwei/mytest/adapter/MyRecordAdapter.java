@@ -54,7 +54,7 @@ public class MyRecordAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        ZuJian zujian=null;
+        ZuJian zujian = null;
         if(convertView==null){
             zujian=new ZuJian();
             convertView=inflater.inflate(R.layout.item,null);
