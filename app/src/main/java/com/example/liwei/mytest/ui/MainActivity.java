@@ -45,7 +45,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private final static int PAGE_ACCOUNT=0;
     private final static int PAGE_MYSELF=1;
-
+    /*总余额*/
+    private TextView textViewAllCount;
     /*中间按钮*/
     private AlertDialog.Builder dialog;//布局变成View用到的
     private LayoutInflater inflater;
@@ -76,7 +77,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     /*数据库*/
     private MyDataBase datebase;
-    private SQLiteDatabase sqLiteDatabase;
     private final static String DATABASE_NAME="mydatabase";
     private final static String TABLE_BANK_NAME="bank";
     private final static int TABLE_JIANBANK_ID=1;
@@ -96,7 +96,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         initialize();
     }
 
+
     private void initialize() {
+        /*数据库*/
+        datebase=new MyDataBase(this,DATABASE_NAME,null,1);
         /*底部控件*/
         layoutAccont= (LinearLayout) findViewById(R.id.layoutAccount);
         layoutAccont.setOnClickListener(this);
@@ -117,6 +120,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         pageradapter=new ViewPagerAdapter(list);
         viewPager.setAdapter(pageradapter);
         viewPager.addOnPageChangeListener(this);
+        /*pager1——顶部控件（总余额）*/
+        textViewAllCount= (TextView) pager_view1.findViewById(R.id.tv_allCount);
+        textViewAllCount.setText(String.format("%.2f", datebase.getAllMount()));
         /**pager1——中间控件**/
         layout_bank= (LinearLayout) pager_view1.findViewById(R.id.bank);
         layout_bank.setOnClickListener(this);
@@ -132,23 +138,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         listItem=getData();
         myRecordAdapter=new MyRecordAdapter(MainActivity.this,listItem);
         listView.setAdapter(myRecordAdapter);
-        /*数据库*/
-        datebase=new MyDataBase(this,DATABASE_NAME,null,1);
+
     }
 
-    private String showData(String table,int id) {
-        sqLiteDatabase=datebase.getReadableDatabase();
-        String[] cloum=new String[]{"mount"};
-        float mount=0.00f;
-        try{
-            Cursor cursor=sqLiteDatabase.query(table, cloum,"id ="+id, null, null, null, null);
-            cursor.moveToFirst();
-            mount=cursor.getFloat(cursor.getColumnIndex("mount"));
-        }catch (Exception e){
-            return "null";
-        }
-        return mount+"";
-    }
+
 
     @Override
     public void onClick(View v) {
@@ -189,15 +182,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onClick(DialogInterface dialog, int which) {
                 String currentMount=edWallet.getText().toString();
                 if(mount_wallet.equals(currentMount)==false){
-                    String sql="update "+TABLE_WALLET_NAME+" set mount="+currentMount+" where id="+TABLE_WALLET_ID;
-                    sqLiteDatabase=datebase.getWritableDatabase();
-                    sqLiteDatabase.execSQL(sql);
+                    datebase.updateData(TABLE_WALLET_NAME,"mount",currentMount,TABLE_WALLET_ID);
                 }
                 view_wallet.findViewById(R.id.wallet_ed_money).setEnabled(false);
             }
         });
         dialog.setView(view_wallet);
-        edWallet.setText(showData(TABLE_WALLET_NAME, TABLE_WALLET_ID));
+        edWallet.setText(datebase.queryData(TABLE_WALLET_NAME,TABLE_WALLET_ID,"mount")+"");
         dialog.setTitle("钱包");
         dialog.show();
     }
@@ -229,22 +220,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 String currentZhifubaoMount = edZhifubao.getText().toString();
                 String currentYuebaoMount = edYuebao.getText().toString();
                 if (mount_zhifubao.equals(currentZhifubaoMount) == false) {
-                    String sql = "update " + TABLE_ZHIFUBAO_NAME + " set mount=" + currentZhifubaoMount + " where id=" + TABLE_ZHIFUBAO_ID;
-                    sqLiteDatabase = datebase.getWritableDatabase();
-                    sqLiteDatabase.execSQL(sql);
+                    datebase.updateData(TABLE_ZHIFUBAO_NAME,"mount",currentZhifubaoMount,TABLE_ZHIFUBAO_ID);
                 }
                 if (mount_yuebao.equals(currentYuebaoMount) == false) {
-                    String sql = "update " + TABLE_ZHIFUBAO_NAME + " set mount=" + currentYuebaoMount + " where id=" + TABLE_YUEBAO_ID;
-                    sqLiteDatabase = datebase.getWritableDatabase();
-                    sqLiteDatabase.execSQL(sql);
+                    datebase.updateData(TABLE_ZHIFUBAO_NAME,"mount",currentYuebaoMount,TABLE_YUEBAO_ID);
                 }
                 edZhifubao.setEnabled(false);
                 edYuebao.setEnabled(false);
             }
         });
         dialog.setView(view_zhifubao);
-        edZhifubao.setText(showData(TABLE_ZHIFUBAO_NAME, TABLE_ZHIFUBAO_ID));
-        edYuebao.setText(showData(TABLE_ZHIFUBAO_NAME, TABLE_YUEBAO_ID));
+        edZhifubao.setText(datebase.queryData(TABLE_ZHIFUBAO_NAME, TABLE_ZHIFUBAO_ID, "mount")+"");
+        edYuebao.setText(datebase.queryData(TABLE_ZHIFUBAO_NAME, TABLE_YUEBAO_ID,"mount")+"");
         dialog.setTitle("支付宝");
         dialog.show();
     }
@@ -264,15 +251,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onClick(DialogInterface dialog, int which) {
                 String currentMount=edWeixin.getText().toString();
                 if(mount_weixin.equals(currentMount)==false){
-                    String sql="update "+TABLE_WEIXIN_NAME+" set mount="+currentMount+" where id="+TABLE_WEXIN_ID;
-                    sqLiteDatabase=datebase.getWritableDatabase();
-                    sqLiteDatabase.execSQL(sql);
+                    datebase.updateData(TABLE_WEIXIN_NAME, "mount", currentMount, TABLE_WEXIN_ID);
                 }
                 view_weixin.findViewById(R.id.weixin_ed_money).setEnabled(false);
             }
         });
         dialog.setView(view_weixin);
-        edWeixin.setText(showData(TABLE_WEIXIN_NAME, TABLE_WEXIN_ID));
+        edWeixin.setText(datebase.queryData(TABLE_WEIXIN_NAME, TABLE_WEXIN_ID,"mount")+"");
         dialog.setTitle("微信钱包");
         dialog.show();
     }
@@ -302,15 +287,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onClick(DialogInterface dialog, int which) {
                 String currentJianBankMount = edJianBankmoney.getText().toString();
                 if (mount_jianbank.equals(currentJianBankMount) == false) {
-                    String sql = "update " + TABLE_BANK_NAME + " set mount=" + currentJianBankMount + " where id=" + TABLE_JIANBANK_ID;
-                    sqLiteDatabase = datebase.getWritableDatabase();
-                    sqLiteDatabase.execSQL(sql);
+                    datebase.updateData(TABLE_BANK_NAME, "mount", currentJianBankMount, TABLE_JIANBANK_ID);
                 }
                 String currentZhongBankMount = edZhongBankmoney.getText().toString();
                 if (mount_zhongbank.equals(currentZhongBankMount) == false) {
-                    String sql = "update " + TABLE_BANK_NAME + " set mount=" + currentZhongBankMount + " where id=" + TABLE_ZHONGBANK_ID;
-                    sqLiteDatabase = datebase.getWritableDatabase();
-                    sqLiteDatabase.execSQL(sql);
+                    datebase.updateData(TABLE_BANK_NAME, "mount", currentZhongBankMount, TABLE_ZHONGBANK_ID);
                 }
 
                 edJianBankmoney.setEnabled(false);
@@ -318,8 +299,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
         dialog.setView(view_bank);
-        edJianBankmoney.setText(showData(TABLE_BANK_NAME, TABLE_JIANBANK_ID));
-        edZhongBankmoney.setText(showData(TABLE_BANK_NAME, TABLE_ZHONGBANK_ID));
+        edJianBankmoney.setText(datebase.queryData(TABLE_BANK_NAME, TABLE_JIANBANK_ID, "mount")+"");
+        edZhongBankmoney.setText(datebase.queryData(TABLE_BANK_NAME, TABLE_ZHONGBANK_ID, "mount")+"");
         dialog.setTitle("银行卡");
         dialog.show();
 
