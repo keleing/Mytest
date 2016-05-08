@@ -6,14 +6,16 @@ import java.util.Date;
  * Created by LiWei on 2016/4/25.
  */
 public class Payment {
-    private double amount;
-    private Date time;
+    private MyDate date;
+    private float amount;
     private String purpose;
     private String way;
 
-    public Payment(double amount, Date time, String purpose, String way) {
+    public Payment() {
+    }
+    public Payment(float amount, MyDate date, String purpose, String way) {
         this.amount = amount;
-        this.time = time;
+        this.date = date;
         this.purpose = purpose;
         this.way = way;
     }
@@ -22,16 +24,16 @@ public class Payment {
         return amount;
     }
 
-    public void setAmount(double amount) {
+    public void setAmount(float amount) {
         this.amount = amount;
     }
 
-    public Date getTime() {
-        return time;
+    public MyDate getTime() {
+        return date;
     }
 
-    public void setTime(Date time) {
-        this.time = time;
+    public void setTime(MyDate date) {
+        this.date = date;
     }
 
     public String getPurpose() {

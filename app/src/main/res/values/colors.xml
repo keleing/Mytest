@@ -9,4 +9,9 @@
     <color name="weixinBackground">#00f22e</color>
     <color name="palyBackground">#ff0000</color>
     <color name="itemBackground">#ff00ff</color>
+    <color name="payTimeBackground">#a100ff</color>
+    <color name="payPurposeBackground">#ff00ea</color>
+    <color name="payWayBackground">#0033ff</color>
+    <color name="payMountBackground">#1aff00</color>
+    <color name="payOkBackground">#a100ff</color>
 </resources>

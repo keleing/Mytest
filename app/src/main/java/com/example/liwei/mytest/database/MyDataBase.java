@@ -6,6 +6,12 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.support.annotation.VisibleForTesting;
 
+import com.example.liwei.mytest.entity.MyDate;
+import com.example.liwei.mytest.entity.Payment;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by LiWei on 2016/4/27.
  */
@@ -24,6 +30,8 @@ public class MyDataBase extends SQLiteOpenHelper {
     private final static int TABLE_WEXIN_ID=1;
     private final static String TABLE_WALLET_NAME="wallet";
     private final static int TABLE_WALLET_ID=1;
+    /*支付表*/
+    private final static String TABLE_PAYMENT_NAME="payment";
 
 
     public MyDataBase(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
@@ -56,6 +64,11 @@ public class MyDataBase extends SQLiteOpenHelper {
         sqlCreateTableWallet="insert into "+TABLE_WALLET_NAME+" values(1,25.0) ";
         db.execSQL(sqlCreateTableWallet);
 
+        String sqlCreateTablePayment="create table "+TABLE_PAYMENT_NAME+" (year int,month int,day int,purpose,way,mount NUMERIC(10,2))";
+        db.execSQL(sqlCreateTablePayment);
+        sqlCreateTablePayment="insert into "+TABLE_PAYMENT_NAME+" values(1,2,3,4,5,6) ";
+        db.execSQL(sqlCreateTablePayment);
+
     }
 
     @Override
@@ -85,6 +98,27 @@ public class MyDataBase extends SQLiteOpenHelper {
         }
         return mount;
     }
+    public List<Payment> queryPayData() {
+        List<Payment> listPayment=new ArrayList<Payment>();
+        sqLiteDatabase=this.getReadableDatabase();
+        String[] row=new String[]{"year","month","day","purpose","way","mount"};
+        Cursor cursor=sqLiteDatabase.query(TABLE_PAYMENT_NAME, row, null, null, null, null, null);
+        cursor.moveToFirst();
+        for(int i=0;i<cursor.getCount();i++){
+            Payment payment=new Payment();
+            MyDate date=new MyDate();
+            date.setYear(cursor.getInt(cursor.getColumnIndex("year")));
+            date.setMonth(cursor.getInt(cursor.getColumnIndex("month")));
+            date.setDay(cursor.getInt(cursor.getColumnIndex("day")));
+            payment.setTime(date);
+            payment.setPurpose(cursor.getString(cursor.getColumnIndex("purpose")));
+            payment.setWay(cursor.getString(cursor.getColumnIndex("way")));
+            payment.setAmount(cursor.getFloat(cursor.getColumnIndex("mount")));
+            listPayment.add(payment);
+            cursor.moveToNext();
+        }
+        return listPayment;
+    }
     public float getAllMount(){
         float jianBankMount=0.00f,zhongBankMount=0.00f,weixinMount=0.00f,zhifubaoMount=0.00f,yuebaoMount=0.00f,walletMount=0.00f;
         float allMount1;
@@ -96,5 +130,10 @@ public class MyDataBase extends SQLiteOpenHelper {
         walletMount= this.queryData(TABLE_WALLET_NAME,TABLE_WALLET_ID,"mount");
         allMount1=jianBankMount+zhongBankMount+weixinMount+zhifubaoMount+yuebaoMount+walletMount;
         return allMount1;
+    }
+    public void addData(String table,Payment payment){
+        sqLiteDatabase=this.getWritableDatabase();
+        String sql="insert into "+table+" (year,month,day,purpose,way,mount) values(1,2,3,4,5,6)";
+        sqLiteDatabase.execSQL(sql);
     }
 }

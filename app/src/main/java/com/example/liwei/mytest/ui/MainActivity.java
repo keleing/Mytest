@@ -2,12 +2,17 @@ package com.example.liwei.mytest.ui;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Rect;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.TouchDelegate;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -19,8 +24,11 @@ import com.example.liwei.mytest.database.MyDataBase;
 import com.example.liwei.mytest.R;
 import com.example.liwei.mytest.adapter.MyRecordAdapter;
 import com.example.liwei.mytest.adapter.ViewPagerAdapter;
+import com.example.liwei.mytest.entity.MyDate;
+import com.example.liwei.mytest.entity.Payment;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -141,7 +149,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add(0,0,0,"支出");
+        menu.add(0, 1, 1, "收入");
+        return super.onCreateOptionsMenu(menu);
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case 0:
+                startActivity(new Intent(MainActivity.this,PayActivity.class));
+                break;
+            case 1:
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     public void onClick(View v) {
@@ -180,9 +205,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         dialog.setPositiveButton("确定", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                String currentMount=edWallet.getText().toString();
-                if(mount_wallet.equals(currentMount)==false){
-                    datebase.updateData(TABLE_WALLET_NAME,"mount",currentMount,TABLE_WALLET_ID);
+                String currentMount = edWallet.getText().toString();
+                if (mount_wallet.equals(currentMount) == false) {
+                    datebase.updateData(TABLE_WALLET_NAME, "mount", currentMount, TABLE_WALLET_ID);
                 }
                 view_wallet.findViewById(R.id.wallet_ed_money).setEnabled(false);
             }
@@ -220,17 +245,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 String currentZhifubaoMount = edZhifubao.getText().toString();
                 String currentYuebaoMount = edYuebao.getText().toString();
                 if (mount_zhifubao.equals(currentZhifubaoMount) == false) {
-                    datebase.updateData(TABLE_ZHIFUBAO_NAME,"mount",currentZhifubaoMount,TABLE_ZHIFUBAO_ID);
+                    datebase.updateData(TABLE_ZHIFUBAO_NAME, "mount", currentZhifubaoMount, TABLE_ZHIFUBAO_ID);
                 }
                 if (mount_yuebao.equals(currentYuebaoMount) == false) {
-                    datebase.updateData(TABLE_ZHIFUBAO_NAME,"mount",currentYuebaoMount,TABLE_YUEBAO_ID);
+                    datebase.updateData(TABLE_ZHIFUBAO_NAME, "mount", currentYuebaoMount, TABLE_YUEBAO_ID);
                 }
                 edZhifubao.setEnabled(false);
                 edYuebao.setEnabled(false);
             }
         });
         dialog.setView(view_zhifubao);
-        edZhifubao.setText(datebase.queryData(TABLE_ZHIFUBAO_NAME, TABLE_ZHIFUBAO_ID, "mount")+"");
+        edZhifubao.setText(datebase.queryData(TABLE_ZHIFUBAO_NAME, TABLE_ZHIFUBAO_ID, "mount") + "");
         edYuebao.setText(datebase.queryData(TABLE_ZHIFUBAO_NAME, TABLE_YUEBAO_ID,"mount")+"");
         dialog.setTitle("支付宝");
         dialog.show();
@@ -249,8 +274,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         dialog.setPositiveButton("确定", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                String currentMount=edWeixin.getText().toString();
-                if(mount_weixin.equals(currentMount)==false){
+                String currentMount = edWeixin.getText().toString();
+                if (mount_weixin.equals(currentMount) == false) {
                     datebase.updateData(TABLE_WEIXIN_NAME, "mount", currentMount, TABLE_WEXIN_ID);
                 }
                 view_weixin.findViewById(R.id.weixin_ed_money).setEnabled(false);
@@ -299,8 +324,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
         dialog.setView(view_bank);
-        edJianBankmoney.setText(datebase.queryData(TABLE_BANK_NAME, TABLE_JIANBANK_ID, "mount")+"");
-        edZhongBankmoney.setText(datebase.queryData(TABLE_BANK_NAME, TABLE_ZHONGBANK_ID, "mount")+"");
+        edJianBankmoney.setText(datebase.queryData(TABLE_BANK_NAME, TABLE_JIANBANK_ID, "mount") + "");
+        edZhongBankmoney.setText(datebase.queryData(TABLE_BANK_NAME, TABLE_ZHONGBANK_ID, "mount") + "");
         dialog.setTitle("银行卡");
         dialog.show();
 
@@ -346,13 +371,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onPageScrollStateChanged(int state) {}
 
     public List<Map<String, Object>> getData() {
+        List<Payment> listPayment=datebase.queryPayData();
         List<Map<String,Object>> data=new ArrayList<Map<String, Object>>();
-        for(int i=0;i<10;i++){
-            Map<String,Object> map= new HashMap<>();
-            map.put("title","1");
-            map.put("image",R.drawable.bank);
-            map.put("time",1995);
-            data.add(map);
+        if(listPayment.size()!=0){
+            for(int i=0;i<listPayment.size();i++){
+                Map<String,Object> map= new HashMap<>();
+                map.put("title",listPayment.get(i).getPurpose());
+                map.put("image",R.drawable.bank);
+                MyDate date=listPayment.get(i).getTime();
+                map.put("time", date.getYear()+"年"+date.getMonth()+"月"+date.getDay()+"日");
+                data.add(map);
+            }
+
+        }else{
+            for(int i=0;i<10;i++){
+                Map<String,Object> map= new HashMap<>();
+                map.put("title","1");
+                map.put("image",R.drawable.bank);
+                map.put("time",1995);
+                data.add(map);
+            }
+
         }
         return data;
     }
