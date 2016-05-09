@@ -118,6 +118,18 @@ public class PayActivity extends Activity implements View.OnClickListener, DateP
     }
 
     private void savePaymentClicked() {
+        if(edPayYear.getText().toString().equals("")){
+            Toast.makeText(this,"时间不能为空",Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if(edPayPurpose.getText().toString().equals("")){
+            Toast.makeText(this,"请填写用途",Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if(edPayAmount.getText().toString().equals("")){
+            Toast.makeText(this,"请输入金额",Toast.LENGTH_SHORT).show();
+            return;
+        }
         payDate.setYear(Integer.parseInt(edPayYear.getText().toString()));
         payDate.setMonth(Integer.parseInt(edPayMonth.getText().toString()));
         payDate.setDay(Integer.parseInt(edPayDay.getText().toString()));

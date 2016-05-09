@@ -2,8 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/itemBackground">
+    android:layout_height="match_parent">
     <ImageView
         android:layout_width="35dp"
         android:layout_height="35dp"
@@ -20,12 +19,14 @@
             android:layout_height="wrap_content"
             android:id="@+id/item_title"
             android:textSize="20dp"
+            android:textColor="@color/white"
             android:text="123"/>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/item_time"
             android:gravity="right"
+            android:textColor="@color/white"
             android:textSize="10dp"
             android:text="1997"/>
     </LinearLayout>

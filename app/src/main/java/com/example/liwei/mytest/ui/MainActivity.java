@@ -376,23 +376,37 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if(listPayment.size()!=0){
             for(int i=0;i<listPayment.size();i++){
                 Map<String,Object> map= new HashMap<>();
-                map.put("title",listPayment.get(i).getPurpose());
-                map.put("image",R.drawable.bank);
+                map.put("title",listPayment.get(i).getPurpose()+"\n(共花费)："+listPayment.get(i).getAmount());
+                switch (listPayment.get(i).getWay()){
+                    case "中行卡":
+                        map.put("image",R.drawable.bank);
+                        break;
+                    case "建行卡":
+                        map.put("image",R.drawable.bank);
+                        break;
+                    case "微信":
+                        map.put("image",R.drawable.weixin);
+                        break;
+                    case "支付宝":
+                        map.put("image",R.drawable.zhifubao);
+                        break;
+                    case "余额宝":
+                        map.put("image",R.drawable.zhifubao);
+                        break;
+                    case "钱包":
+                        map.put("image",R.drawable.wallet);
+                        break;
+                    default:
+                        map.put("image",R.drawable.wallet);
+                }
+
                 MyDate date=listPayment.get(i).getTime();
                 map.put("time", date.getYear()+"年"+date.getMonth()+"月"+date.getDay()+"日");
                 data.add(map);
             }
 
-        }else{
-            for(int i=0;i<10;i++){
-                Map<String,Object> map= new HashMap<>();
-                map.put("title","1");
-                map.put("image",R.drawable.bank);
-                map.put("time",1995);
-                data.add(map);
-            }
-
         }
+
         return data;
     }
 

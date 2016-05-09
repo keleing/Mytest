@@ -64,7 +64,7 @@ public class MyDataBase extends SQLiteOpenHelper {
         sqlCreateTableWallet="insert into "+TABLE_WALLET_NAME+" values(1,25.0) ";
         db.execSQL(sqlCreateTableWallet);
 
-        String sqlCreateTablePayment="create table "+TABLE_PAYMENT_NAME+" (year int,month int,day int,purpose,way,mount NUMERIC(10,2))";
+        String sqlCreateTablePayment="create table "+TABLE_PAYMENT_NAME+" (year int,month int,day int,purpose TEXT,way TEXT,mount NUMERIC(10,2))";
         db.execSQL(sqlCreateTablePayment);
         sqlCreateTablePayment="insert into "+TABLE_PAYMENT_NAME+" values(1,2,3,4,5,6) ";
         db.execSQL(sqlCreateTablePayment);
@@ -133,7 +133,15 @@ public class MyDataBase extends SQLiteOpenHelper {
     }
     public void addData(String table,Payment payment){
         sqLiteDatabase=this.getWritableDatabase();
-        String sql="insert into "+table+" (year,month,day,purpose,way,mount) values(1,2,3,4,5,6)";
+        int year=payment.getTime().getYear();
+        int month=payment.getTime().getMonth();
+        int day=payment.getTime().getDay();
+        String way=payment.getWay();
+        String purpose=payment.getPurpose();
+        double mount=payment.getAmount();
+        String sql1="insert into "+table+" (year,month,day,purpose,way,mount) ";
+        String sql2="values("+year+","+month+","+day+",'"+purpose+"','"+way+"',"+mount+")";
+        String sql=sql1+sql2;
         sqLiteDatabase.execSQL(sql);
     }
 }
