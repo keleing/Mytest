@@ -79,9 +79,20 @@ public class MyDataBase extends SQLiteOpenHelper {
         db.execSQL("drop if table exists "+TABLE_WALLET_NAME);
         onCreate(db);
     }
-    public void updateData(String tableName,String row,String newValue,int id){
+    public void updateDataNewAmount(String tableName,String row,String newValue,int id){
         sqLiteDatabase=this.getWritableDatabase();
         String sql="update "+tableName+" set "+row+"="+newValue+" where id="+id;
+        sqLiteDatabase.execSQL(sql);
+    }
+
+    public void updateDataAddAmount(String tableName,String row,String addValue,int id){
+        sqLiteDatabase=this.getWritableDatabase();
+        String sql="update "+tableName+" set "+row+"="+row+"+"+addValue+" where id="+id;
+        sqLiteDatabase.execSQL(sql);
+    }
+    public void updateDataReduceAmount(String tableName,String row,String addValue,int id){
+        sqLiteDatabase=this.getWritableDatabase();
+        String sql="update "+tableName+" set "+row+"="+row+"-"+addValue+" where id="+id;
         sqLiteDatabase.execSQL(sql);
     }
 

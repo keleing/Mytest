@@ -130,7 +130,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         viewPager.addOnPageChangeListener(this);
         /*pager1——顶部控件（总余额）*/
         textViewAllCount= (TextView) pager_view1.findViewById(R.id.tv_allCount);
-        textViewAllCount.setText(String.format("%.2f", datebase.getAllMount()));
+
         /**pager1——中间控件**/
         layout_bank= (LinearLayout) pager_view1.findViewById(R.id.bank);
         layout_bank.setOnClickListener(this);
@@ -141,13 +141,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         layout_wallet= (LinearLayout) pager_view1.findViewById(R.id.wallet);
         layout_wallet.setOnClickListener(this);
 
+
         listView= (ListView) pager_view1.findViewById(R.id.listview_record);
         listItem=new ArrayList<Map<String, Object>>();
-        listItem=getData();
-        myRecordAdapter=new MyRecordAdapter(MainActivity.this,listItem);
-        listView.setAdapter(myRecordAdapter);
+        reflushData();
+
 
     }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -160,12 +162,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case 0:
-                startActivity(new Intent(MainActivity.this,PayActivity.class));
+                Intent intent=new Intent(MainActivity.this,PayActivity.class);
+                startActivityForResult(intent,0);
                 break;
             case 1:
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        reflushData();
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
@@ -207,7 +216,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onClick(DialogInterface dialog, int which) {
                 String currentMount = edWallet.getText().toString();
                 if (mount_wallet.equals(currentMount) == false) {
-                    datebase.updateData(TABLE_WALLET_NAME, "mount", currentMount, TABLE_WALLET_ID);
+                    datebase.updateDataNewAmount(TABLE_WALLET_NAME, "mount", currentMount, TABLE_WALLET_ID);
                 }
                 view_wallet.findViewById(R.id.wallet_ed_money).setEnabled(false);
             }
@@ -245,10 +254,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 String currentZhifubaoMount = edZhifubao.getText().toString();
                 String currentYuebaoMount = edYuebao.getText().toString();
                 if (mount_zhifubao.equals(currentZhifubaoMount) == false) {
-                    datebase.updateData(TABLE_ZHIFUBAO_NAME, "mount", currentZhifubaoMount, TABLE_ZHIFUBAO_ID);
+                    datebase.updateDataNewAmount(TABLE_ZHIFUBAO_NAME, "mount", currentZhifubaoMount, TABLE_ZHIFUBAO_ID);
                 }
                 if (mount_yuebao.equals(currentYuebaoMount) == false) {
-                    datebase.updateData(TABLE_ZHIFUBAO_NAME, "mount", currentYuebaoMount, TABLE_YUEBAO_ID);
+                    datebase.updateDataNewAmount(TABLE_ZHIFUBAO_NAME, "mount", currentYuebaoMount, TABLE_YUEBAO_ID);
                 }
                 edZhifubao.setEnabled(false);
                 edYuebao.setEnabled(false);
@@ -276,7 +285,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onClick(DialogInterface dialog, int which) {
                 String currentMount = edWeixin.getText().toString();
                 if (mount_weixin.equals(currentMount) == false) {
-                    datebase.updateData(TABLE_WEIXIN_NAME, "mount", currentMount, TABLE_WEXIN_ID);
+                    datebase.updateDataNewAmount(TABLE_WEIXIN_NAME, "mount", currentMount, TABLE_WEXIN_ID);
                 }
                 view_weixin.findViewById(R.id.weixin_ed_money).setEnabled(false);
             }
@@ -312,11 +321,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onClick(DialogInterface dialog, int which) {
                 String currentJianBankMount = edJianBankmoney.getText().toString();
                 if (mount_jianbank.equals(currentJianBankMount) == false) {
-                    datebase.updateData(TABLE_BANK_NAME, "mount", currentJianBankMount, TABLE_JIANBANK_ID);
+                    datebase.updateDataNewAmount(TABLE_BANK_NAME, "mount", currentJianBankMount, TABLE_JIANBANK_ID);
                 }
                 String currentZhongBankMount = edZhongBankmoney.getText().toString();
                 if (mount_zhongbank.equals(currentZhongBankMount) == false) {
-                    datebase.updateData(TABLE_BANK_NAME, "mount", currentZhongBankMount, TABLE_ZHONGBANK_ID);
+                    datebase.updateDataNewAmount(TABLE_BANK_NAME, "mount", currentZhongBankMount, TABLE_ZHONGBANK_ID);
                 }
 
                 edJianBankmoney.setEnabled(false);
@@ -376,7 +385,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if(listPayment.size()!=0){
             for(int i=0;i<listPayment.size();i++){
                 Map<String,Object> map= new HashMap<>();
-                map.put("title",listPayment.get(i).getPurpose()+"\n(共花费)："+listPayment.get(i).getAmount());
+                map.put("title",listPayment.get(i).getPurpose()+"\n(共花费)："+String.format("%.2f", listPayment.get(i).getAmount()));
                 switch (listPayment.get(i).getWay()){
                     case "中行卡":
                         map.put("image",R.drawable.bank);
@@ -414,5 +423,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         dialog=new AlertDialog.Builder(this);
         inflater=LayoutInflater.from(this);
         return  inflater.inflate(layoutId, null);
+    }
+
+    public void reflushData() {
+        textViewAllCount.setText(String.format("%.2f", datebase.getAllMount()));
+        listItem=getData();
+        myRecordAdapter=new MyRecordAdapter(MainActivity.this,listItem);
+        listView.setAdapter(myRecordAdapter);
     }
 }

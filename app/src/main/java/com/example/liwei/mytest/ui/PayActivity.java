@@ -15,6 +15,7 @@ import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
+import android.widget.Switch;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -45,7 +46,20 @@ public class PayActivity extends Activity implements View.OnClickListener, DateP
     private Button btnPayExit;
 
     private MyDataBase dataBase;
+
+    /*数据库*/
+    private MyDataBase datebase;
     private final static String DATABASE_NAME="mydatabase";
+    private final static String TABLE_BANK_NAME="bank";
+    private final static int TABLE_JIANBANK_ID=1;
+    private final static int TABLE_ZHONGBANK_ID=2;
+    private final static String TABLE_ZHIFUBAO_NAME="zhifubao";
+    private final static int TABLE_ZHIFUBAO_ID=1;
+    private final static int TABLE_YUEBAO_ID=2;
+    private final static String TABLE_WEIXIN_NAME="weixin";
+    private final static int TABLE_WEXIN_ID=1;
+    private final static String TABLE_WALLET_NAME="wallet";
+    private final static int TABLE_WALLET_ID=1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -138,7 +152,8 @@ public class PayActivity extends Activity implements View.OnClickListener, DateP
         payment.setWay(spinner.getSelectedItem().toString());
         payment.setAmount(Float.parseFloat(edPayAmount.getText().toString()));
         try{
-            dataBase.addData("payment",payment);
+            dataBase.addData("payment", payment);
+            reduceAmount(spinner.getSelectedItem().toString(), edPayAmount.getText().toString());
             Toast.makeText(this,"保存成功",Toast.LENGTH_SHORT).show();
             this.finish();
         }catch (Exception e){
@@ -146,6 +161,32 @@ public class PayActivity extends Activity implements View.OnClickListener, DateP
         }
 
 
+    }
+
+
+
+    private void reduceAmount(String way,String amount) {
+        switch (way){
+            case "建行卡":
+                dataBase.updateDataReduceAmount(TABLE_BANK_NAME, "mount", amount, TABLE_JIANBANK_ID);
+                break;
+            case "中行卡":
+                dataBase.updateDataReduceAmount(TABLE_BANK_NAME, "mount", amount, TABLE_ZHONGBANK_ID);
+                break;
+            case "微信":
+                dataBase.updateDataReduceAmount(TABLE_WEIXIN_NAME, "mount", amount, TABLE_WEXIN_ID);
+                break;
+            case "支付宝":
+                dataBase.updateDataReduceAmount(TABLE_ZHIFUBAO_NAME, "mount", amount, TABLE_ZHIFUBAO_ID);
+                break;
+            case "余额宝":
+                dataBase.updateDataReduceAmount(TABLE_ZHIFUBAO_NAME, "mount", amount, TABLE_YUEBAO_ID);
+                break;
+            default:
+                dataBase.updateDataReduceAmount(TABLE_WALLET_NAME, "mount", amount, TABLE_WALLET_ID);
+                break;
+
+        }
     }
 
     private void exitPaymentClicked() {
