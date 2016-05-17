@@ -8,6 +8,7 @@ import android.support.annotation.VisibleForTesting;
 
 import com.example.liwei.mytest.entity.MyDate;
 import com.example.liwei.mytest.entity.Payment;
+import com.example.liwei.mytest.entity.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +33,8 @@ public class MyDataBase extends SQLiteOpenHelper {
     private final static int TABLE_WALLET_ID=1;
     /*支付表*/
     private final static String TABLE_PAYMENT_NAME="payment";
+    /*用户表*/
+    private final static String TABLE_USER_NAME="user";
 
 
     public MyDataBase(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
@@ -68,6 +71,11 @@ public class MyDataBase extends SQLiteOpenHelper {
         db.execSQL(sqlCreateTablePayment);
         sqlCreateTablePayment="insert into "+TABLE_PAYMENT_NAME+" values(1,2,3,4,5,6) ";
         db.execSQL(sqlCreateTablePayment);
+
+        String sqlCreateTableUser="create table "+TABLE_USER_NAME+" (userid text,password text)";
+        db.execSQL(sqlCreateTableUser);
+        sqlCreateTableUser="insert into "+TABLE_USER_NAME+" values('mytest','123') ";
+        db.execSQL(sqlCreateTableUser);
 
     }
 
@@ -137,7 +145,7 @@ public class MyDataBase extends SQLiteOpenHelper {
         zhongBankMount= this.queryData(TABLE_BANK_NAME, TABLE_ZHONGBANK_ID, "mount");
         weixinMount= this.queryData(TABLE_WEIXIN_NAME, TABLE_WEXIN_ID,"mount");
         zhifubaoMount= this.queryData(TABLE_ZHIFUBAO_NAME, TABLE_ZHIFUBAO_ID, "mount");
-        yuebaoMount=this.queryData(TABLE_ZHIFUBAO_NAME, TABLE_YUEBAO_ID,"mount");
+        yuebaoMount=this.queryData(TABLE_ZHIFUBAO_NAME, TABLE_YUEBAO_ID, "mount");
         walletMount= this.queryData(TABLE_WALLET_NAME,TABLE_WALLET_ID,"mount");
         allMount1=jianBankMount+zhongBankMount+weixinMount+zhifubaoMount+yuebaoMount+walletMount;
         return allMount1;
@@ -154,5 +162,20 @@ public class MyDataBase extends SQLiteOpenHelper {
         String sql2="values("+year+","+month+","+day+",'"+purpose+"','"+way+"',"+mount+")";
         String sql=sql1+sql2;
         sqLiteDatabase.execSQL(sql);
+    }
+
+    public User queryUserData(String table) {
+        sqLiteDatabase=this.getReadableDatabase();
+        String[] cloum=new String[]{"userid","password"};
+        User userResult=new User();
+        try{
+            Cursor cursor=sqLiteDatabase.query(table, cloum,null, null, null, null, null);
+            cursor.moveToFirst();
+            userResult.setUserID(cursor.getString(cursor.getColumnIndex("userid")));
+            userResult.setPassword(cursor.getString(cursor.getColumnIndex("password")));
+        }catch (Exception e){
+            return userResult;
+        }
+        return userResult;
     }
 }
