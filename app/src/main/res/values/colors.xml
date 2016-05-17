@@ -16,4 +16,10 @@
     <color name="payOkBackground">#a100ff</color>
     <color name="white">#ffffff</color>
 
+    <color name="IncomeTimeBackground">#ff6f00</color>
+    <color name="IncomePurposeBackground">#0032ff</color>
+    <color name="IncomeWayBackground">#aaff00</color>
+    <color name="IncomeMountBackground">#ffbb00</color>
+    <color name="IncomeOkBackground">#00ff1e</color>
+
 </resources>

@@ -166,6 +166,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startActivityForResult(intent,0);
                 break;
             case 1:
+                Intent intent1=new Intent(MainActivity.this,IncomeActivity.class);
+                startActivityForResult(intent1,1);
                 break;
         }
         return super.onOptionsItemSelected(item);
