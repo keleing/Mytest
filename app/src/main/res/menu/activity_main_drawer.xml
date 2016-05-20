@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_camera"
+            android:title="个人资料" />
+        <item
+            android:id="@+id/nav_gallery"
+            android:title="修改密码" />
+    </group>
+
+    <item android:title="个性化设置">
+        <menu>
+            <item
+                android:id="@+id/nav_share"
+                android:title="背景" />
+            <item
+                android:id="@+id/nav_send"
+                android:title="主题" />
+        </menu>
+    </item>
+
+</menu>

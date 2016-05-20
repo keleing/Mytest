@@ -5,17 +5,18 @@ import java.util.Date;
 /**
  * Created by LiWei on 2016/4/25.
  */
-public class Payment {
-    private MyDate date;
+public class Payment extends MyDate{
     private float amount;
     private String purpose;
     private String way;
 
     public Payment() {
     }
-    public Payment(float amount, MyDate date, String purpose, String way) {
+    public Payment(int year,int month,int day,float amount, MyDate date, String purpose, String way) {
+        this.year=year;
+        this.month=month;
+        this.day=day;
         this.amount = amount;
-        this.date = date;
         this.purpose = purpose;
         this.way = way;
     }
@@ -28,13 +29,6 @@ public class Payment {
         this.amount = amount;
     }
 
-    public MyDate getTime() {
-        return date;
-    }
-
-    public void setTime(MyDate date) {
-        this.date = date;
-    }
 
     public String getPurpose() {
         return purpose;

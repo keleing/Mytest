@@ -17,22 +17,21 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#8bffffff"
+        android:background="#8b00ffa6"
         android:gravity="center"
         android:layout_weight="1">
         <Button
             android:layout_width="20dp"
             android:layout_height="30dp"
-            android:id="@+id/btn_payTime"
+            android:id="@+id/btn_incomeTime"
             android:background="@drawable/calendar"
             android:layout_weight="1" />
         <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/white"
             android:enabled="false"
             android:gravity="center"
-            android:id="@+id/ed_payYear"
+            android:id="@+id/ed_incomeYear"
             android:layout_weight="1"/>
         <TextView
             android:layout_width="wrap_content"
@@ -43,9 +42,8 @@
         <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/white"
             android:enabled="false"
-            android:id="@+id/ed_payMonth"
+            android:id="@+id/ed_incomeMonth"
             android:gravity="center"
             android:layout_weight="1"/>
         <TextView
@@ -57,10 +55,9 @@
         <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/white"
             android:enabled="false"
             android:gravity="center"
-            android:id="@+id/ed_payDay"
+            android:id="@+id/ed_incomeDay"
             android:layout_weight="1"/>
         <TextView
             android:layout_width="wrap_content"
@@ -72,7 +69,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#8bffffff"
+        android:background="#8bff00a6"
         android:gravity="center"
         android:layout_weight="1">
         <TextView
@@ -81,16 +78,18 @@
             android:textColor="@color/white"
             android:text="来源"/>
         <EditText
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
             android:textColor="@color/white"
-            android:id="@+id/ed_payPurpose"/>
+            android:id="@+id/ed_incomeSource"/>
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#8bffffff"
+        android:background="#8bb7ff00"
         android:gravity="center"
         android:layout_weight="1">
         <TextView
@@ -104,13 +103,13 @@
             android:layout_height="wrap_content"
             android:textColor="@color/white"
             android:gravity="center"
-            android:id="@+id/spinner_payWay"
+            android:id="@+id/spinner_IncomeDestination"
             android:layout_weight="1"></Spinner>
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#8bffffff"
+        android:background="#8b00ffe5"
         android:gravity="center"
         android:layout_weight="1">
         <TextView
@@ -121,8 +120,9 @@
         <EditText
             android:layout_width="180dp"
             android:layout_height="wrap_content"
+            android:gravity="center"
             android:textColor="@color/white"
-            android:id="@+id/ed_payAmount"
+            android:id="@+id/ed_IncomeAmount"
             android:numeric="decimal"/>
         <TextView
             android:layout_width="wrap_content"
@@ -137,26 +137,15 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#8bffffff"
+        android:background="#8b0dff00"
         android:gravity="center"
         android:layout_weight="1">
         <Button
-            android:layout_width="wrap_content"
+            android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:id="@+id/btn_paySave"
+            android:id="@+id/btn_incomeSave"
             android:background="#00f7ff00"
             android:textColor="@color/white"
             android:text="save"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"/>
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/btn_payExit"
-            android:background="#00f7ff00"
-            android:textColor="@color/white"
-            android:text="exit"/>
     </LinearLayout>
 </LinearLayout>

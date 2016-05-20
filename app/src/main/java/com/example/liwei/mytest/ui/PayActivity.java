@@ -20,6 +20,7 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.example.liwei.mytest.R;
+import com.example.liwei.mytest.constant.DataConstant;
 import com.example.liwei.mytest.database.MyDataBase;
 import com.example.liwei.mytest.entity.MyDate;
 import com.example.liwei.mytest.entity.Payment;
@@ -32,7 +33,7 @@ import java.util.List;
 
 public class PayActivity extends Activity implements View.OnClickListener, DatePickerDialog.OnDateSetListener {
     private Payment payment;  //支付
-    private MyDate payDate;
+
     private Button btnPayTime;
     private EditText edPayYear;//显示当前时间
     private EditText edPayMonth;
@@ -43,7 +44,6 @@ public class PayActivity extends Activity implements View.OnClickListener, DateP
     private List<String> listPayWay;
     private EditText edPayAmount;//支付数量
     private Button btnPaySave;
-    private Button btnPayExit;
 
     private MyDataBase dataBase;
 
@@ -76,7 +76,7 @@ public class PayActivity extends Activity implements View.OnClickListener, DateP
         edPayYear= (EditText) findViewById(R.id.ed_payYear);
         edPayMonth= (EditText) findViewById(R.id.ed_payMonth);
         edPayDay= (EditText) findViewById(R.id.ed_payDay);
-        payDate=new MyDate();
+
         /*支付目的*/
         edPayPurpose= (EditText) findViewById(R.id.ed_payPurpose);
         /*支付方式*/
@@ -95,8 +95,6 @@ public class PayActivity extends Activity implements View.OnClickListener, DateP
         /*支付保存*/
         btnPaySave= (Button) findViewById(R.id.btn_paySave);
         btnPaySave.setOnClickListener(this);
-        btnPayExit= (Button) findViewById(R.id.btn_payExit);
-        btnPayExit.setOnClickListener(this);
         /*数据库*/
         dataBase=new MyDataBase(this,DATABASE_NAME,null,1);
 
@@ -111,9 +109,7 @@ public class PayActivity extends Activity implements View.OnClickListener, DateP
             case R.id.btn_paySave:
                 savePaymentClicked();
                 break;
-            case R.id.btn_payExit:
-                exitPaymentClicked();
-                break;
+
         }
     }
     private void selectTimeClicked() {
@@ -144,15 +140,14 @@ public class PayActivity extends Activity implements View.OnClickListener, DateP
             Toast.makeText(this,"请输入金额",Toast.LENGTH_SHORT).show();
             return;
         }
-        payDate.setYear(Integer.parseInt(edPayYear.getText().toString()));
-        payDate.setMonth(Integer.parseInt(edPayMonth.getText().toString()));
-        payDate.setDay(Integer.parseInt(edPayDay.getText().toString()));
-        payment.setTime(payDate);
+        payment.setYear(Integer.parseInt(edPayYear.getText().toString()));
+        payment.setMonth(Integer.parseInt(edPayMonth.getText().toString()));
+        payment.setDay(Integer.parseInt(edPayDay.getText().toString()));
         payment.setPurpose(edPayPurpose.getText().toString());
         payment.setWay(spinner.getSelectedItem().toString());
         payment.setAmount(Float.parseFloat(edPayAmount.getText().toString()));
         try{
-            dataBase.addData("payment", payment);
+            dataBase.addPayData(DataConstant.TABLE_PAYMENT_NAME, payment);
             reduceAmount(spinner.getSelectedItem().toString(), edPayAmount.getText().toString());
             Toast.makeText(this,"保存成功",Toast.LENGTH_SHORT).show();
             this.finish();
@@ -189,9 +184,6 @@ public class PayActivity extends Activity implements View.OnClickListener, DateP
         }
     }
 
-    private void exitPaymentClicked() {
-
-    }
 
 
 

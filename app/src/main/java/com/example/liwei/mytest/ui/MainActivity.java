@@ -3,32 +3,33 @@ package com.example.liwei.mytest.ui;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Rect;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.support.design.widget.NavigationView;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.TouchDelegate;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.liwei.mytest.constant.DataConstant;
 import com.example.liwei.mytest.database.MyDataBase;
 import com.example.liwei.mytest.R;
 import com.example.liwei.mytest.adapter.MyRecordAdapter;
 import com.example.liwei.mytest.adapter.ViewPagerAdapter;
-import com.example.liwei.mytest.entity.MyDate;
+import com.example.liwei.mytest.entity.Income;
+import com.example.liwei.mytest.entity.MyImage;
 import com.example.liwei.mytest.entity.Payment;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -85,29 +86,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     /*数据库*/
     private MyDataBase datebase;
-    private final static String DATABASE_NAME="mydatabase";
-    private final static String TABLE_BANK_NAME="bank";
-    private final static int TABLE_JIANBANK_ID=1;
-    private final static int TABLE_ZHONGBANK_ID=2;
-    private final static String TABLE_ZHIFUBAO_NAME="zhifubao";
-    private final static int TABLE_ZHIFUBAO_ID=1;
-    private final static int TABLE_YUEBAO_ID=2;
-    private final static String TABLE_WEIXIN_NAME="weixin";
-    private final static int TABLE_WEXIN_ID=1;
-    private final static String TABLE_WALLET_NAME="wallet";
-    private final static int TABLE_WALLET_ID=1;
 
+    /*侧拉菜单*/
+    private NavigationView navigationView;
+    private LinearLayout layoutMenuHead;
+    private ImageView menuImageHead;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.main_and_menu);
         initialize();
     }
 
 
     private void initialize() {
         /*数据库*/
-        datebase=new MyDataBase(this,DATABASE_NAME,null,1);
+        datebase=new MyDataBase(this, DataConstant.DATABASE_NAME,null,1);
         /*底部控件*/
         layoutAccont= (LinearLayout) findViewById(R.id.layoutAccount);
         layoutAccont.setOnClickListener(this);
@@ -146,9 +140,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         listItem=new ArrayList<Map<String, Object>>();
         reflushData();
 
+        /*侧拉菜单*/
+        navigationView= (NavigationView) findViewById(R.id.nav_view);
+        layoutMenuHead= (LinearLayout) navigationView.getHeaderView(0);
+        menuImageHead= (ImageView) layoutMenuHead.findViewById(R.id.iv_menuHeadImage);
+        Bitmap bitmap= BitmapFactory.decodeResource(getResources(),R.drawable.background);
+        bitmap=MyImage.toRoundBitmap(bitmap);
+        menuImageHead.setImageBitmap(bitmap);
+        menuImageHead.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(MainActivity.this,"123",Toast.LENGTH_SHORT).show();
+            }
+        });
+
 
     }
-
 
 
     @Override
@@ -218,13 +225,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onClick(DialogInterface dialog, int which) {
                 String currentMount = edWallet.getText().toString();
                 if (mount_wallet.equals(currentMount) == false) {
-                    datebase.updateDataNewAmount(TABLE_WALLET_NAME, "mount", currentMount, TABLE_WALLET_ID);
+                    datebase.updateDataNewAmount(DataConstant.TABLE_WALLET_NAME, "mount", currentMount, DataConstant.TABLE_WALLET_ID);
                 }
                 view_wallet.findViewById(R.id.wallet_ed_money).setEnabled(false);
             }
         });
         dialog.setView(view_wallet);
-        edWallet.setText(datebase.queryData(TABLE_WALLET_NAME,TABLE_WALLET_ID,"mount")+"");
+        edWallet.setText(datebase.queryData(DataConstant.TABLE_WALLET_NAME, DataConstant.TABLE_WALLET_ID, "mount") + "");
         dialog.setTitle("钱包");
         dialog.show();
     }
@@ -256,18 +263,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 String currentZhifubaoMount = edZhifubao.getText().toString();
                 String currentYuebaoMount = edYuebao.getText().toString();
                 if (mount_zhifubao.equals(currentZhifubaoMount) == false) {
-                    datebase.updateDataNewAmount(TABLE_ZHIFUBAO_NAME, "mount", currentZhifubaoMount, TABLE_ZHIFUBAO_ID);
+                    datebase.updateDataNewAmount(DataConstant.TABLE_ZHIFUBAO_NAME, "mount", currentZhifubaoMount, DataConstant.TABLE_ZHIFUBAO_ID);
                 }
                 if (mount_yuebao.equals(currentYuebaoMount) == false) {
-                    datebase.updateDataNewAmount(TABLE_ZHIFUBAO_NAME, "mount", currentYuebaoMount, TABLE_YUEBAO_ID);
+                    datebase.updateDataNewAmount(DataConstant.TABLE_ZHIFUBAO_NAME, "mount", currentYuebaoMount, DataConstant.TABLE_YUEBAO_ID);
                 }
                 edZhifubao.setEnabled(false);
                 edYuebao.setEnabled(false);
             }
         });
         dialog.setView(view_zhifubao);
-        edZhifubao.setText(datebase.queryData(TABLE_ZHIFUBAO_NAME, TABLE_ZHIFUBAO_ID, "mount") + "");
-        edYuebao.setText(datebase.queryData(TABLE_ZHIFUBAO_NAME, TABLE_YUEBAO_ID,"mount")+"");
+        edZhifubao.setText(datebase.queryData(DataConstant.TABLE_ZHIFUBAO_NAME, DataConstant.TABLE_ZHIFUBAO_ID, "mount") + "");
+        edYuebao.setText(datebase.queryData(DataConstant.TABLE_ZHIFUBAO_NAME, DataConstant.TABLE_YUEBAO_ID,"mount")+"");
         dialog.setTitle("支付宝");
         dialog.show();
     }
@@ -287,13 +294,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onClick(DialogInterface dialog, int which) {
                 String currentMount = edWeixin.getText().toString();
                 if (mount_weixin.equals(currentMount) == false) {
-                    datebase.updateDataNewAmount(TABLE_WEIXIN_NAME, "mount", currentMount, TABLE_WEXIN_ID);
+                    datebase.updateDataNewAmount(DataConstant.TABLE_WEIXIN_NAME, "mount", currentMount, DataConstant.TABLE_WEXIN_ID);
                 }
                 view_weixin.findViewById(R.id.weixin_ed_money).setEnabled(false);
             }
         });
         dialog.setView(view_weixin);
-        edWeixin.setText(datebase.queryData(TABLE_WEIXIN_NAME, TABLE_WEXIN_ID,"mount")+"");
+        edWeixin.setText(datebase.queryData(DataConstant.TABLE_WEIXIN_NAME, DataConstant.TABLE_WEXIN_ID,"mount")+"");
         dialog.setTitle("微信钱包");
         dialog.show();
     }
@@ -323,11 +330,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onClick(DialogInterface dialog, int which) {
                 String currentJianBankMount = edJianBankmoney.getText().toString();
                 if (mount_jianbank.equals(currentJianBankMount) == false) {
-                    datebase.updateDataNewAmount(TABLE_BANK_NAME, "mount", currentJianBankMount, TABLE_JIANBANK_ID);
+                    datebase.updateDataNewAmount(DataConstant.TABLE_BANK_NAME, "mount", currentJianBankMount,DataConstant.TABLE_JIANBANK_ID);
                 }
                 String currentZhongBankMount = edZhongBankmoney.getText().toString();
                 if (mount_zhongbank.equals(currentZhongBankMount) == false) {
-                    datebase.updateDataNewAmount(TABLE_BANK_NAME, "mount", currentZhongBankMount, TABLE_ZHONGBANK_ID);
+                    datebase.updateDataNewAmount(DataConstant.TABLE_BANK_NAME, "mount", currentZhongBankMount, DataConstant.TABLE_ZHONGBANK_ID);
                 }
 
                 edJianBankmoney.setEnabled(false);
@@ -335,8 +342,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
         dialog.setView(view_bank);
-        edJianBankmoney.setText(datebase.queryData(TABLE_BANK_NAME, TABLE_JIANBANK_ID, "mount") + "");
-        edZhongBankmoney.setText(datebase.queryData(TABLE_BANK_NAME, TABLE_ZHONGBANK_ID, "mount") + "");
+        edJianBankmoney.setText(datebase.queryData(DataConstant.TABLE_BANK_NAME, DataConstant.TABLE_JIANBANK_ID, "mount") + "");
+        edZhongBankmoney.setText(datebase.queryData(DataConstant.TABLE_BANK_NAME, DataConstant.TABLE_ZHONGBANK_ID, "mount") + "");
         dialog.setTitle("银行卡");
         dialog.show();
 
@@ -344,21 +351,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
     private void myselfLayout() {
+        viewPager.setCurrentItem(PAGE_MYSELF);
         imageViewMyself.setImageResource(R.drawable.myself_clicked);
         textViewMyself.setTextColor(getResources().getColor(R.color.clicked));
         imageViewAccount.setImageResource(R.drawable.account);
         textViewAccount.setTextColor(getResources().getColor(R.color.unclicked));
-        viewPager.setCurrentItem(PAGE_MYSELF);
-
     }
 
 
     private void accountLayout() {
+        viewPager.setCurrentItem(PAGE_ACCOUNT);
         imageViewAccount.setImageResource(R.drawable.account_clicked);
         textViewAccount.setTextColor(getResources().getColor(R.color.clicked));
         imageViewMyself.setImageResource(R.drawable.myself);
         textViewMyself.setTextColor(getResources().getColor(R.color.unclicked));
-        viewPager.setCurrentItem(PAGE_ACCOUNT);
+
     }
 
     @Override
@@ -373,6 +380,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             textViewMyself.setTextColor(getResources().getColor(R.color.clicked));
             imageViewAccount.setImageResource(R.drawable.account);
             textViewAccount.setTextColor(getResources().getColor(R.color.unclicked));
+        }else{
         }
     }
 
@@ -383,12 +391,44 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public List<Map<String, Object>> getData() {
         List<Payment> listPayment=datebase.queryPayData();
+        List<Income> listIncome=datebase.queryIncomeData();
         List<Map<String,Object>> data=new ArrayList<Map<String, Object>>();
-        if(listPayment.size()!=0){
-            for(int i=0;i<listPayment.size();i++){
+        if(listPayment.size()!=0) {
+            for (int i = 0; i < listPayment.size(); i++) {
+                Map<String, Object> map = new HashMap<>();
+                map.put("title", listPayment.get(i).getPurpose() + "\n(共花费)：" + String.format("%.2f", listPayment.get(i).getAmount()));
+                switch (listPayment.get(i).getWay()) {
+                    case "中行卡":
+                        map.put("image", R.drawable.bank);
+                        break;
+                    case "建行卡":
+                        map.put("image", R.drawable.bank);
+                        break;
+                    case "微信":
+                        map.put("image", R.drawable.weixin);
+                        break;
+                    case "支付宝":
+                        map.put("image", R.drawable.zhifubao);
+                        break;
+                    case "余额宝":
+                        map.put("image", R.drawable.zhifubao);
+                        break;
+                    case "钱包":
+                        map.put("image", R.drawable.wallet);
+                        break;
+                    default:
+                        map.put("image", R.drawable.wallet);
+                }
+
+                map.put("time", listPayment.get(i).getYear() + "年" + listPayment.get(i).getMonth() + "月" + listPayment.get(i).getDay() + "日");
+                data.add(map);
+            }
+        }
+        if(listIncome.size()!=0){
+            for(int i=0;i<listIncome.size();i++){
                 Map<String,Object> map= new HashMap<>();
-                map.put("title",listPayment.get(i).getPurpose()+"\n(共花费)："+String.format("%.2f", listPayment.get(i).getAmount()));
-                switch (listPayment.get(i).getWay()){
+                map.put("title",listIncome.get(i).getSource()+"\n(数量)："+String.format("%.2f", listIncome.get(i).getAmount()));
+                switch (listIncome.get(i).getDestination()){
                     case "中行卡":
                         map.put("image",R.drawable.bank);
                         break;
@@ -410,14 +450,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     default:
                         map.put("image",R.drawable.wallet);
                 }
-
-                MyDate date=listPayment.get(i).getTime();
-                map.put("time", date.getYear()+"年"+date.getMonth()+"月"+date.getDay()+"日");
+                map.put("time", listIncome.get(i).getYear()+"年"+listIncome.get(i).getMonth()+"月"+listIncome.get(i).getDay()+"日");
                 data.add(map);
             }
 
         }
-
         return data;
     }
 

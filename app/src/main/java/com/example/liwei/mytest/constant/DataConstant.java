@@ -23,5 +23,9 @@ public class DataConstant {
     public final static String TABLE_WALLET_NAME="wallet";//钱包表
     public final static int TABLE_WALLET_ID=1;//钱包id
 
-    public final static String TABLE_USER_NAME="user";
+    public final static String TABLE_PAYMENT_NAME="payment";//支付表
+
+    public final static String TABLE_USER_NAME="user";//用户表
+
+    public final static String TABLE_Income_NAME="income";//用户表
 }
