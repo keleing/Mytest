@@ -53,9 +53,9 @@ public class MyDataBase extends SQLiteOpenHelper {
         sqlCreateTableWallet="insert into "+DataConstant.TABLE_WALLET_NAME+" values(1,25.0) ";
         db.execSQL(sqlCreateTableWallet);
         //支付方式表
-        String sqlCreateTablePayment="create table "+DataConstant.TABLE_PAYMENT_NAME+" (year int,month int,day int,purpose TEXT,way TEXT,mount NUMERIC(10,2))";
+        String sqlCreateTablePayment="create table "+DataConstant.TABLE_PAYMENT_NAME+" (year int,month int,day int,hour int,minute int,purpose TEXT,way TEXT,mount NUMERIC(10,2))";
         db.execSQL(sqlCreateTablePayment);
-        sqlCreateTablePayment="insert into "+DataConstant.TABLE_PAYMENT_NAME+" values(1,2,3,4,5,6) ";
+        sqlCreateTablePayment="insert into "+DataConstant.TABLE_PAYMENT_NAME+" values(1,2,3,4,5,6,7,8) ";
         db.execSQL(sqlCreateTablePayment);
         //用户表
         String sqlCreateTableUser="create table "+DataConstant.TABLE_USER_NAME+" (userid text,password text)";
@@ -63,9 +63,9 @@ public class MyDataBase extends SQLiteOpenHelper {
         sqlCreateTableUser="insert into "+DataConstant.TABLE_USER_NAME+" values('mytest','123') ";
         db.execSQL(sqlCreateTableUser);
         //收入表
-        String sqlCreateTableIncome="create table "+ DataConstant.TABLE_Income_NAME+" (year int,month int,day int,source TEXT,destination TEXT,amount NUMERIC(10,2))";
+        String sqlCreateTableIncome="create table "+ DataConstant.TABLE_Income_NAME+" (year int,month int,day int,hour int,minute int,source TEXT,destination TEXT,amount NUMERIC(10,2))";
         db.execSQL(sqlCreateTableIncome);
-        sqlCreateTableIncome="insert into "+DataConstant.TABLE_Income_NAME+" values(1,2,3,4,5,6) ";
+        sqlCreateTableIncome="insert into "+DataConstant.TABLE_Income_NAME+" values(1,2,3,4,5,6,7,8) ";
         db.execSQL(sqlCreateTableIncome);
     }
 
@@ -110,7 +110,7 @@ public class MyDataBase extends SQLiteOpenHelper {
     public List<Payment> queryPayData() {
         List<Payment> listPayment=new ArrayList<Payment>();
         sqLiteDatabase=this.getReadableDatabase();
-        String[] row=new String[]{"year","month","day","purpose","way","mount"};
+        String[] row=new String[]{"year","month","day","hour","minute","purpose","way","mount"};
         Cursor cursor=sqLiteDatabase.query(DataConstant.TABLE_PAYMENT_NAME, row, null, null, null, null, null);
         cursor.moveToFirst();
         for(int i=0;i<cursor.getCount();i++){
@@ -118,6 +118,8 @@ public class MyDataBase extends SQLiteOpenHelper {
             payment.setYear(cursor.getInt(cursor.getColumnIndex("year")));
             payment.setMonth(cursor.getInt(cursor.getColumnIndex("month")));
             payment.setDay(cursor.getInt(cursor.getColumnIndex("day")));
+            payment.setHour(cursor.getInt(cursor.getColumnIndex("hour")));
+            payment.setMinute(cursor.getInt(cursor.getColumnIndex("minute")));
             payment.setPurpose(cursor.getString(cursor.getColumnIndex("purpose")));
             payment.setWay(cursor.getString(cursor.getColumnIndex("way")));
             payment.setAmount(cursor.getFloat(cursor.getColumnIndex("mount")));
@@ -129,14 +131,16 @@ public class MyDataBase extends SQLiteOpenHelper {
     public List<Income> queryIncomeData() {
         List<Income> listIncome=new ArrayList<Income>();
         sqLiteDatabase=this.getReadableDatabase();
-        String[] row=new String[]{"year","month","day","source","destination","amount"};
+        String[] row=new String[]{"year","month","day","hour","minute","source","destination","amount"};
         Cursor cursor=sqLiteDatabase.query(DataConstant.TABLE_Income_NAME, row, null, null, null, null, null);
         cursor.moveToFirst();
         for(int i=0;i<cursor.getCount();i++){
-            Income income=new Income();
+            Income income = new Income();
             income.setYear(cursor.getInt(cursor.getColumnIndex("year")));
             income.setMonth(cursor.getInt(cursor.getColumnIndex("month")));
             income.setDay(cursor.getInt(cursor.getColumnIndex("day")));
+            income.setHour(cursor.getInt(cursor.getColumnIndex("hour")));
+            income.setMinute(cursor.getInt(cursor.getColumnIndex("minute")));
             income.setSource(cursor.getString(cursor.getColumnIndex("source")));
             income.setDestination(cursor.getString(cursor.getColumnIndex("destination")));
             income.setAmount(cursor.getFloat(cursor.getColumnIndex("amount")));
@@ -157,16 +161,18 @@ public class MyDataBase extends SQLiteOpenHelper {
         allMount1=jianBankMount+zhongBankMount+weixinMount+zhifubaoMount+yuebaoMount+walletMount;
         return allMount1;
     }
-    public void addPayData(String table,Payment payment){
+    public void addPayData(String table, Payment payment){
         sqLiteDatabase=this.getWritableDatabase();
         int year=payment.getYear();
         int month=payment.getMonth();
         int day=payment.getDay();
+        int hour=payment.getHour();
+        int minute=payment.getMinute();
         String way=payment.getWay();
         String purpose=payment.getPurpose();
         double mount=payment.getAmount();
-        String sql1="insert into "+table+" (year,month,day,purpose,way,mount) ";
-        String sql2="values("+year+","+month+","+day+",'"+purpose+"','"+way+"',"+mount+")";
+        String sql1="insert into "+table+" (year,month,day,hour,minute,purpose,way,mount) ";
+        String sql2="values("+year+","+month+","+day+","+hour+","+minute+",'"+purpose+"','"+way+"',"+mount+")";
         String sql=sql1+sql2;
         sqLiteDatabase.execSQL(sql);
     }
@@ -175,11 +181,13 @@ public class MyDataBase extends SQLiteOpenHelper {
         int year=income.getYear();
         int month=income.getMonth();
         int day=income.getDay();
+        int hour=income.getHour();
+        int minute=income.getMinute();
         String source=income.getSource();
         String destination=income.getDestination();
         float amount=income.getAmount();
-        String sql1="insert into "+table+" (year,month,day,source,destination,amount) ";
-        String sql2="values("+year+","+month+","+day+",'"+source+"','"+destination+"',"+amount+")";
+        String sql1="insert into "+table+" (year,month,day,hour,minute,source,destination,amount) ";
+        String sql2="values("+year+","+month+","+day+","+hour+","+minute+",'"+source+"','"+destination+"',"+amount+")";
         String sql=sql1+sql2;
         sqLiteDatabase.execSQL(sql);
     }

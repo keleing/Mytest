@@ -2,6 +2,7 @@ package com.example.liwei.mytest.ui;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.style.TtsSpan;
@@ -31,14 +32,18 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-public class PayActivity extends Activity implements View.OnClickListener, DatePickerDialog.OnDateSetListener {
+public class PayActivity extends Activity implements View.OnClickListener, DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
     private Payment payment;  //支付
 
-    private Button btnPayTime;
+    private Button btnPayDate;
     private EditText edPayYear;//显示当前时间
     private EditText edPayMonth;
     private EditText edPayDay;
-    private EditText edPayPurpose;
+    private Button btnPayTime;
+    private EditText edPayHour;
+    private EditText edPayMinute;
+
+    private EditText edPayPurpose;//支付目的
     private Spinner spinner;//支付方式
     private SpinnerAdapter adapter;
     private List<String> listPayWay;
@@ -71,12 +76,15 @@ public class PayActivity extends Activity implements View.OnClickListener, DateP
 
         payment=new Payment();
         /*支付时间*/
-        btnPayTime= (Button) findViewById(R.id.btn_payTime);
-        btnPayTime.setOnClickListener(this);
+        btnPayDate= (Button) findViewById(R.id.btn_payDate);
+        btnPayDate.setOnClickListener(this);
         edPayYear= (EditText) findViewById(R.id.ed_payYear);
         edPayMonth= (EditText) findViewById(R.id.ed_payMonth);
         edPayDay= (EditText) findViewById(R.id.ed_payDay);
-
+        btnPayTime= (Button) findViewById(R.id.btn_payTime);
+        btnPayTime.setOnClickListener(this);
+        edPayHour= (EditText) findViewById(R.id.ed_payHour);
+        edPayMinute= (EditText) findViewById(R.id.ed_payMinute);
         /*支付目的*/
         edPayPurpose= (EditText) findViewById(R.id.ed_payPurpose);
         /*支付方式*/
@@ -103,6 +111,9 @@ public class PayActivity extends Activity implements View.OnClickListener, DateP
     @Override
     public void onClick(View v) {
         switch (v.getId()){
+            case R.id.btn_payDate:
+                selectDateClicked();
+                break;
             case R.id.btn_payTime:
                 selectTimeClicked();
                 break;
@@ -112,7 +123,8 @@ public class PayActivity extends Activity implements View.OnClickListener, DateP
 
         }
     }
-    private void selectTimeClicked() {
+
+    private void selectDateClicked() {
         Calendar calendar=Calendar.getInstance();
         int nowYear=calendar.get(calendar.YEAR);
         int nowMonth=calendar.get(calendar.MONTH);
@@ -127,8 +139,38 @@ public class PayActivity extends Activity implements View.OnClickListener, DateP
         edPayDay.setText(dayOfMonth + "");
     }
 
+    private void selectTimeClicked() {
+        Calendar calendar=Calendar.getInstance();
+        int nowHour=calendar.get(calendar.HOUR_OF_DAY);
+        int nowMinute=calendar.get(calendar.MINUTE);
+        TimePickerDialog timePickerDialog=new TimePickerDialog(this,this,nowHour,nowMinute,true);
+        timePickerDialog.show();
+    }
+
+    @Override
+    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+        if(hourOfDay<10){
+            edPayHour.setText("0"+hourOfDay);
+        }else{
+            edPayHour.setText(hourOfDay+"");
+        }
+
+        if(minute<10){
+            edPayMinute.setText("0"+minute);
+        }else{
+            edPayMinute.setText(minute+"");
+        }
+
+
+    }
+
+
     private void savePaymentClicked() {
         if(edPayYear.getText().toString().equals("")){
+            Toast.makeText(this,"日期不能为空",Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if(edPayHour.getText().toString().equals("")){
             Toast.makeText(this,"时间不能为空",Toast.LENGTH_SHORT).show();
             return;
         }
@@ -140,9 +182,12 @@ public class PayActivity extends Activity implements View.OnClickListener, DateP
             Toast.makeText(this,"请输入金额",Toast.LENGTH_SHORT).show();
             return;
         }
-        payment.setYear(Integer.parseInt(edPayYear.getText().toString()));
-        payment.setMonth(Integer.parseInt(edPayMonth.getText().toString()));
-        payment.setDay(Integer.parseInt(edPayDay.getText().toString()));
+        payment.setYear(Integer.parseInt(edPayYear.getText().toString()));//年
+        payment.setMonth(Integer.parseInt(edPayMonth.getText().toString()));//月
+        payment.setDay(Integer.parseInt(edPayDay.getText().toString()));//日
+        payment.setHour(Integer.parseInt(edPayHour.getText().toString()));//小时
+        payment.setMinute(Integer.parseInt(edPayMinute.getText().toString()));//分钟
+
         payment.setPurpose(edPayPurpose.getText().toString());
         payment.setWay(spinner.getSelectedItem().toString());
         payment.setAmount(Float.parseFloat(edPayAmount.getText().toString()));
@@ -183,8 +228,6 @@ public class PayActivity extends Activity implements View.OnClickListener, DateP
 
         }
     }
-
-
 
 
 

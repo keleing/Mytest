@@ -330,7 +330,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onClick(DialogInterface dialog, int which) {
                 String currentJianBankMount = edJianBankmoney.getText().toString();
                 if (mount_jianbank.equals(currentJianBankMount) == false) {
-                    datebase.updateDataNewAmount(DataConstant.TABLE_BANK_NAME, "mount", currentJianBankMount,DataConstant.TABLE_JIANBANK_ID);
+                    datebase.updateDataNewAmount(DataConstant.TABLE_BANK_NAME, "mount", currentJianBankMount, DataConstant.TABLE_JIANBANK_ID);
                 }
                 String currentZhongBankMount = edZhongBankmoney.getText().toString();
                 if (mount_zhongbank.equals(currentZhongBankMount) == false) {
@@ -420,7 +420,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         map.put("image", R.drawable.wallet);
                 }
 
-                map.put("time", listPayment.get(i).getYear() + "年" + listPayment.get(i).getMonth() + "月" + listPayment.get(i).getDay() + "日");
+                map.put("time", listPayment.get(i).getYear() + "年"
+                        + listPayment.get(i).getMonth() + "月"
+                        + listPayment.get(i).getDay() + "日"
+                        + listPayment.get(i).getHour()+":"
+                        + listPayment.get(i).getMinute());
                 data.add(map);
             }
         }
@@ -450,7 +454,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     default:
                         map.put("image",R.drawable.wallet);
                 }
-                map.put("time", listIncome.get(i).getYear()+"年"+listIncome.get(i).getMonth()+"月"+listIncome.get(i).getDay()+"日");
+                map.put("time", listIncome.get(i).getYear() + "年"
+                        + listIncome.get(i).getMonth() + "月"
+                        + listIncome.get(i).getDay()+"日"
+                        + listIncome.get(i).getHour()+":"
+                        + listIncome.get(i).getMinute());
                 data.add(map);
             }
 
@@ -466,8 +474,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public void reflushData() {
         textViewAllCount.setText(String.format("%.2f", datebase.getAllMount()));
-        listItem=getData();
+        listItem=getData();;
         myRecordAdapter=new MyRecordAdapter(MainActivity.this,listItem);
         listView.setAdapter(myRecordAdapter);
     }
+
 }
